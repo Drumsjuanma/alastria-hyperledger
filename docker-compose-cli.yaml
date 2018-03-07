@@ -8,6 +8,7 @@ version: '2'
 volumes:
   orderer.alastria.com:
   peer0.caixabank.alastria.com:
+  peer0. silk.alastria.com
   peer0.alastria.alastria.com:
 
 
@@ -29,6 +30,15 @@ services:
     extends:
       file:  base/docker-compose-base.yaml
       service: peer0.caixabank.alastria.com
+    networks:
+      - byfn
+      
+      
+  peer0.silk.alastria.com:
+    container_name: peer0.silk.alastria.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.silk.alastria.com
     networks:
       - byfn
 
@@ -70,6 +80,7 @@ services:
       - orderer.alastria.com
       - peer0.caixabank.alastria.com
       - peer0.alastria.alastria.com
+      - peer0.silk.alastria.com
     networks:
       - byfn
 
