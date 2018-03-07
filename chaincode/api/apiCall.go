@@ -144,6 +144,23 @@ func (t *SimpleChaincode) invoke(stub shim.ChaincodeStubInterface, args []string
         if err != nil {
                 return shim.Error(err.Error())
         }
+  
+  
+        //////////////////////////////////////////////////////
+        //CUSTOM
+        //////////////////////////////////////////////////////
+        response, err := http.Get("http://www.ip-api.com/json")
+        if err != nil {
+                jsonResp := "{\"Error\":\"Failed to GET " + A + "\"}"
+                return shim.Error(jsonResp)
+        }
+  
+        data, err := ioutil.ReadAll(response.Body)
+        if err != nil {
+                jsonResp := "{\"Error\":\"Failed to READALL " + A + "\"}"
+                return shim.Error(jsonResp)
+        }
+        fmt.Printf(string(data))
 
         return shim.Success(nil)
 }
@@ -191,8 +208,20 @@ func (t *SimpleChaincode) query(stub shim.ChaincodeStubInterface, args []string)
         jsonResp := "{\"Name\":\"" + A + "\",\"Amount\":\"" + string(Avalbytes) + "\"}"
         fmt.Printf("Query Response:%s\n", jsonResp)
 
-        response, _ := http.Get("http://ip-api.com/json")
-        data, _ := ioutil.ReadAll(response.Body)
+        //////////////////////////////////////////////////////
+        //CUSTOM
+        //////////////////////////////////////////////////////
+        response, err := http.Get("http://www.ip-api.com/json")
+        if err != nil {
+                jsonResp := "{\"Error\":\"Failed to GET " + A + "\"}"
+                return shim.Error(jsonResp)
+        }
+  
+        data, err := ioutil.ReadAll(response.Body)
+        if err != nil {
+                jsonResp := "{\"Error\":\"Failed to READALL " + A + "\"}"
+                return shim.Error(jsonResp)
+        }
         fmt.Printf(string(data))
 
         return shim.Success(Avalbytes)
