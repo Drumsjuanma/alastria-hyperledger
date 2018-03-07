@@ -50,6 +50,26 @@ services:
     ports:
       - 7051:7051
       - 7053:7053
+      
+      
+  peer0.silk.alastria.com:
+    container_name: peer0.silk.alastria.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.silk.alastria.com
+      - CORE_PEER_ADDRESS=peer0.silk.alastria.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.silk.alastria.com:7051
+      - CORE_PEER_LOCALMSPID=SilkMSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/silk.alastria.com/peers/peer0.silk.alastria.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/silk.alastria.com/peers/peer0.silk.alastria.com/tls:/etc/hyperledger/fabric/tls
+        - peer0.silk.alastria.com:/var/hyperledger/production
+    ports:
+      - 8051:7051
+      - 8053:7053
 
   
 
