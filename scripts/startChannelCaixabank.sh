@@ -3,13 +3,13 @@ export CHANNEL_NAME=caixabankchannel
 peer channel create -o orderer.alastria.com:7050 -c $CHANNEL_NAME -f /opt/gopath/src/github.com/hyperledger/fabric/peer/channel-artifacts/caixabankChannel.tx --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/alastria.com/orderers/orderer.alastria.com/msp/tlscacerts/tlsca.alastria.com-cert.pem
 
 echo -e '\n\n\e[92m//////// --- Añadiendo Caixabank al canal --- ////////\e[39m'
- peer channel join -b mychannel.block
+ peer channel join -b caixabankchannel.block
 
 echo -e '\n\n\e[92m//////// --- Añadiendo Alastria al canal --- ////////\e[39m'
- CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/alastria.alastria.com/users/Admin@alastria.alastria.com/msp CORE_PEER_ADDRESS=peer0.alastria.alastria.com:7051 CORE_PEER_LOCALMSPID="AlastriaMSP" CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/alastria.alastria.com/peers/peer0.alastria.alastria.com/tls/ca.crt peer channel join -b mychannel.block
+ CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/alastria.alastria.com/users/Admin@alastria.alastria.com/msp CORE_PEER_ADDRESS=peer0.alastria.alastria.com:7051 CORE_PEER_LOCALMSPID="AlastriaMSP" CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/alastria.alastria.com/peers/peer0.alastria.alastria.com/tls/ca.crt peer channel join -b caixabankchannel.block
 
 echo -e '\n\n\e[92m//////// --- Configurando Anchor Peer Caixabank --- ////////\e[39m'
-peer channel update -o orderer.alastria.com:7050 -c $CHANNEL_NAME -f  /opt/gopath/src/github.com/hyperledger/fabric/peer/channel-artifacts/CaixabankMSPanchors.tx --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/alastria.com/orderers/orderer.alastria.com/msp/tlscacerts/tlsca.alastria.com-cert.pem
+peer channel update -o orderer.alastria.com:7050 -c $CHANNEL_NAME -f  /opt/gopath/src/github.com/hyperledger/fabric/peer/channel-artifacts/CaixabankMSPanchors.tx --tls --cafile /.opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/alastria.com/orderers/orderer.alastria.com/msp/tlscacerts/tlsca.alastria.com-cert.pem
 
 echo -e '\n\n\e[92m//////// --- Configurando Anchor Peer Alastria --- ////////\e[39m'
 CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/alastria.alastria.com/users/Admin@alastria.alastria.com/msp CORE_PEER_ADDRESS=peer0.alastria.alastria.com:7051 CORE_PEER_LOCALMSPID="AlastriaMSP" CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/alastria.alastria.com/peers/peer0.alastria.alastria.com/tls/ca.crt peer channel update -o orderer.alastria.com:7050 -c $CHANNEL_NAME -f /opt/gopath/src/github.com/hyperledger/fabric/peer/channel-artifacts/AlastriaMSPanchors.tx --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/alastria.com/orderers/orderer.alastria.com/msp/tlscacerts/tlsca.alastria.com-cert.pem
