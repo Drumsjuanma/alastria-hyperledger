@@ -6,19 +6,19 @@ export FABRIC_CFG_PATH=$PWD
 configtxgen -profile ThreeOrgsOrdererGenesis -outputBlock ./channel-artifacts/genesis.block
 
 echo -e '\n\n\e[92m/////// --- Creando canal Caixabank-Alastria --- ////////\e[39m'
-configtxgen -profile AlastriaCaixabankChannel -outputCreateChannelTx ./channel-artifacts/caixabankChannel.tx -channelID caixabankChannel
+configtxgen -profile AlastriaCaixabankChannel -outputCreateChannelTx ./channel-artifacts/caixabankChannel.tx -channelID caixabankchannel
 
 echo -e '\n\n\e[92m/////// --- Creando canal Silk-Alastria --- ////////\e[39m'
-configtxgen -profile AlastriaSilkChannel -outputCreateChannelTx ./channel-artifacts/silkChannel.tx -channelID silkChannel
+configtxgen -profile AlastriaSilkChannel -outputCreateChannelTx ./channel-artifacts/silkChannel.tx -channelID silkchannel
 
 echo -e '\n\n\e[92m//////// --- Creando Anchor Peer Caixabank --- ////////\e[39m'
-configtxgen -profile AlastriaCaixabankChannel -outputAnchorPeersUpdate ./channel-artifacts/CaixabankMSPanchors.tx -channelID caixabankChannel -asOrg CaixabankMSP
+configtxgen -profile AlastriaCaixabankChannel -outputAnchorPeersUpdate ./channel-artifacts/CaixabankMSPanchors.tx -channelID caixabankchannel -asOrg CaixabankMSP
 
 echo -e '\n\n\e[92m//////// --- Creando Anchor Peer Silk --- ////////\e[39m'
-configtxgen -profile AlastriaSilkChannel -outputAnchorPeersUpdate ./channel-artifacts/SilkMSPanchors.tx -channelID silkChannel -asOrg SilkMSP
+configtxgen -profile AlastriaSilkChannel -outputAnchorPeersUpdate ./channel-artifacts/SilkMSPanchors.tx -channelID silkchannel -asOrg SilkMSP
 
 echo -e '\n\n\e[92m//////// --- Creando Anchor Peer Alastria-Caixabank --- ////////\e[39m'
-configtxgen -profile AlastriaCaixabankChannel -outputAnchorPeersUpdate ./channel-artifacts/AlastriaMSPCaixabankMSPanchors.tx -channelID caixabankChannel -asOrg AlastriaMSP
+configtxgen -profile AlastriaCaixabankChannel -outputAnchorPeersUpdate ./channel-artifacts/AlastriaMSPCaixabankMSPanchors.tx -channelID caixabankchannel -asOrg AlastriaMSP
 
 echo -e '\n\n\e[92m//////// --- Creando Anchor Peer Alastria-Silk --- ////////\e[39m'
-configtxgen -profile AlastriaSilkChannel -outputAnchorPeersUpdate ./channel-artifacts/AlastriaMSPSilkMSPanchors.tx -channelID silkChannel -asOrg AlastriaMSP
+configtxgen -profile AlastriaSilkChannel -outputAnchorPeersUpdate ./channel-artifacts/AlastriaMSPSilkMSPanchors.tx -channelID silkchannel -asOrg AlastriaMSP
