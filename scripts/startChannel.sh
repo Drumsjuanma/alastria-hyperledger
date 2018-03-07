@@ -1,4 +1,3 @@
-ls
 echo -e '\e[92m//////// --- Creando Canal --- ////////\e[39m'
 export CHANNEL_NAME=mychannel
 peer channel create -o orderer.alastria.com:7050 -c $CHANNEL_NAME -f /opt/gopath/src/github.com/hyperledger/fabric/peer/channel-artifacts/channel.tx --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/alastria.com/orderers/orderer.alastria.com/msp/tlscacerts/tlsca.alastria.com-cert.pem
