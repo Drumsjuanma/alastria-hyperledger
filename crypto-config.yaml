@@ -23,6 +23,14 @@ PeerOrgs:
       Count: 1
     Users:
       Count: 1
+     
+     
+  - Name: Silk
+    Domain: silk.alastria.com
+    Template:
+      Count: 1
+    Users:
+      Count: 1
 
 
   - Name: Alastria
@@ -31,3 +39,5 @@ PeerOrgs:
       Count: 1
     Users:
       Count: 1
+      
+     
