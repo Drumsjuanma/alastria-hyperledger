@@ -1,0 +1,76 @@
+# Copyright IBM Corp. All Rights Reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+Profiles:
+
+    TwoOrgsOrdererGenesis:
+        Orderer:
+            <<: *OrdererDefaults
+            Organizations:
+                - *OrdererOrg
+        Consortiums:
+            SampleConsortium:
+                Organizations:
+                    - *Org1
+                    - *Org2
+    TwoOrgsChannel:
+        Consortium: SampleConsortium
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+                - *Org1
+                - *Org2
+
+################################################################################
+#   Section: Organizations
+################################################################################
+Organizations:
+    - &OrdererOrg
+        Name: OrdererOrg
+        ID: OrdererMSP
+        MSPDir: crypto-config/ordererOrganizations/alastria.com/msp
+
+    - &Org1
+        Name: CaixabankMSP
+        ID: CaixabankMSP
+        MSPDir: crypto-config/peerOrganizations/caixabank.alastria.com/msp
+
+        AnchorPeers:
+            - Host: peer0.caixabank.alastria.com
+              Port: 7051
+
+    - &Org2
+        Name: AlastriaMSP
+        ID: AlastriaMSP
+        MSPDir: crypto-config/peerOrganizations/alastria.alastria.com/msp
+
+        AnchorPeers:
+            - Host: peer0.alastria.alastria.com
+              Port: 7051
+
+################################################################################
+#   SECTION: Orderer
+################################################################################
+Orderer: &OrdererDefaults
+    OrdererType: solo
+    Addresses:
+        - orderer.alastria.com:7050
+    BatchTimeout: 2s
+    BatchSize:
+        MaxMessageCount: 10
+        AbsoluteMaxBytes: 99 MB
+        PreferredMaxBytes: 512 KB
+
+    Kafka:
+        Brokers:
+            - 127.0.0.1:9092
+
+    Organizations:
+
+################################################################################
+#   SECTION: Application
+################################################################################
+Application: &ApplicationDefaults
+    Organizations:

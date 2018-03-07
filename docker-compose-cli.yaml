@@ -1,0 +1,75 @@
+# Copyright IBM Corp. All Rights Reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+version: '2'
+
+volumes:
+  orderer.alastria.com:
+  peer0.caixabank.alastria.com:
+  peer0.alastria.alastria.com:
+
+
+networks:
+  byfn:
+
+services:
+
+  orderer.alastria.com:
+    extends:
+      file:   base/docker-compose-base.yaml
+      service: orderer.alastria.com
+    container_name: orderer.alastria.com
+    networks:
+      - byfn
+
+  peer0.caixabank.alastria.com:
+    container_name: peer0.caixabank.alastria.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.caixabank.alastria.com
+    networks:
+      - byfn
+
+
+  peer0.alastria.alastria.com:
+    container_name: peer0.alastria.alastria.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.alastria.alastria.com
+    networks:
+      - byfn
+
+
+  cli:
+    container_name: cli
+    image: hyperledger/fabric-tools:$IMAGE_TAG
+    tty: true
+    environment:
+      - GOPATH=/opt/gopath
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - CORE_LOGGING_LEVEL=DEBUG
+      - CORE_PEER_ID=cli
+      - CORE_PEER_ADDRESS=peer0.caixabank.alastria.com:7051
+      - CORE_PEER_LOCALMSPID=CaixabankMSP
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/caixabank.alastria.com/peers/peer0.caixabank.alastria.com/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/caixabank.alastria.com/peers/peer0.caixabank.alastria.com/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/caixabank.alastria.com/peers/peer0.caixabank.alastria.com/tls/ca.crt
+      - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/caixabank.alastria.com/users/Admin@caixabank.alastria.com/msp
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    #command: /bin/bash -c './scripts/script.sh ${CHANNEL_NAME} ${DELAY}; sleep $TIMEOUT'
+    volumes:
+        - /var/run/:/host/var/run/
+        - ./chaincode/:/opt/gopath/src/github.com/hyperledger/fabric/examples/chaincode/go
+        - ./crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
+        - ./scripts:/opt/gopath/src/github.com/hyperledger/fabric/peer/scripts/
+        - ./channel-artifacts:/opt/gopath/src/github.com/hyperledger/fabric/peer/channel-artifacts
+    depends_on:
+      - orderer.alastria.com
+      - peer0.caixabank.alastria.com
+      - peer0.alastria.alastria.com
+    networks:
+      - byfn
+
