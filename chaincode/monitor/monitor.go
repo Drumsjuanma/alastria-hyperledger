@@ -21,7 +21,6 @@ package main
 
 import (
         "fmt"
-        "strconv"
         "net/http"
         "io/ioutil"
 
@@ -48,7 +47,7 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
         fmt.Printf("Entity name: " + entityName)
 
         // Write the state to the ledger
-        err = stub.PutState(entityName, " null ")
+    err = stub.PutState(entityName, []byte("null "))
         if err != nil {
                 return shim.Error(err.Error())
         }
@@ -94,18 +93,18 @@ func (t *SimpleChaincode) invoke(stub shim.ChaincodeStubInterface, args []string
         //////////////////////////////////////////////////////
         response, err := http.Get(api)
         if err != nil {
-                jsonResp := "{\"Error\":\"Failed to GET " + A + "\"}"
+                jsonResp := "{\"Error\":\"Failed to GET " + api + "\"}"
                 return shim.Error(jsonResp)
         }
   
         data, err := ioutil.ReadAll(response.Body)
         if err != nil {
-                jsonResp := "{\"Error\":\"Failed to READALL " + A + "\"}"
+          jsonResp := "{\"Error\":\"Failed to READALL " + string(data) + "\"}"
                 return shim.Error(jsonResp)
         }
         fmt.Printf("Valor obtenido:" + string(data))
 
-        err = stub.PutState(entityName, string(data))
+        err = stub.PutState(entityName, []byte(string(data)))
         if err != nil {
                 return shim.Error(err.Error())
         }
