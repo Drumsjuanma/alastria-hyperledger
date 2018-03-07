@@ -13,15 +13,17 @@ Profiles:
         Consortiums:
             SampleConsortium:
                 Organizations:
-                    - *Org1
-                    - *Org2
+                    - *Caixabank
+                    - *Silk
+                    - *Alastria
     TwoOrgsChannel:
         Consortium: SampleConsortium
         Application:
             <<: *ApplicationDefaults
             Organizations:
-                - *Org1
-                - *Org2
+                - *Caixabank
+                - *Silk
+                - *Alastria
 
 ################################################################################
 #   Section: Organizations
@@ -32,7 +34,7 @@ Organizations:
         ID: OrdererMSP
         MSPDir: crypto-config/ordererOrganizations/alastria.com/msp
 
-    - &Org1
+    - &Caixabank
         Name: CaixabankMSP
         ID: CaixabankMSP
         MSPDir: crypto-config/peerOrganizations/caixabank.alastria.com/msp
@@ -40,8 +42,17 @@ Organizations:
         AnchorPeers:
             - Host: peer0.caixabank.alastria.com
               Port: 7051
+             
+    - &Silk
+        Name: SilkMSP
+        ID: SilkMSP
+        MSPDir: crypto-config/peerOrganizations/silk.alastria.com/msp
 
-    - &Org2
+        AnchorPeers:
+            - Host: peer0.silk.alastria.com
+              Port: 7051
+
+    - &Alastria
         Name: AlastriaMSP
         ID: AlastriaMSP
         MSPDir: crypto-config/peerOrganizations/alastria.alastria.com/msp
