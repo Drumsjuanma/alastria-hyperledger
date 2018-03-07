@@ -8,7 +8,7 @@ version: '2'
 volumes:
   orderer.alastria.com:
   peer0.caixabank.alastria.com:
-  peer0. silk.alastria.com:
+  peer0.silk.alastria.com:
   peer0.alastria.alastria.com:
 
 
