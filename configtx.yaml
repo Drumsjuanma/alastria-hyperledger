@@ -24,7 +24,7 @@ Profiles:
                 - *Caixabank
                 - *Alastria
                 
-     AlastriaSilkChannel:
+    AlastriaSilkChannel:
         Consortium: SampleConsortium
         Application:
             <<: *ApplicationDefaults
