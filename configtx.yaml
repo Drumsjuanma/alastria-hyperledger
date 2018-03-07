@@ -5,7 +5,7 @@
 
 Profiles:
 
-    TwoOrgsOrdererGenesis:
+    ThreeOrgsOrdererGenesis:
         Orderer:
             <<: *OrdererDefaults
             Organizations:
@@ -16,12 +16,19 @@ Profiles:
                     - *Caixabank
                     - *Silk
                     - *Alastria
-    TwoOrgsChannel:
+    AlastriaCaixabankChannel:
         Consortium: SampleConsortium
         Application:
             <<: *ApplicationDefaults
             Organizations:
                 - *Caixabank
+                - *Alastria
+                
+     AlastriaSilkChannel:
+        Consortium: SampleConsortium
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
                 - *Silk
                 - *Alastria
 
