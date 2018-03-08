@@ -8,15 +8,17 @@
 # This is a collection of bash functions used by different scripts
 #------------------------------------------------------------------
 
-
-#Set OrdererOrg.Admin globals
+#########################################################
+# Set OrdererOrg.Admin globals 							#
+#########################################################
 setOrdererGlobals() {
         CORE_PEER_LOCALMSPID="OrdererMSP"
         CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/alastria.com/orderers/orderer.alastria.com/msp/tlscacerts/tlsca.alastria.com-cert.pem
         CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/alastria.com/users/Admin@alastria.com/msp
 }
-
-# Set peer globals
+#########################################################
+# Set peer globals 										#
+#########################################################
 setGlobals () {
 	PEER=$1
 	ORG=$2
@@ -34,37 +36,35 @@ setGlobals () {
 	env |grep CORE
 }
 
-
+#########################################################
+# update Anchor peers 									#
+#########################################################
 updateAnchorPeers() {
-  PEER=$1
-  ORG=$2
-  setGlobals $PEER $ORG
+	PEER=$1
+	ORG=$2
+	MSP=$3
+	setGlobals $PEER $ORG $MSP
 
-  if [ -z "$CORE_PEER_TLS_ENABLED" -o "$CORE_PEER_TLS_ENABLED" = "false" ]; then
-                set -x
-		peer channel update -o orderer.example.com:7050 -c $CHANNEL_NAME -f ./channel-artifacts/${CORE_PEER_LOCALMSPID}anchors.tx >&log.txt
-                set +x
-  else
-                set -x
-		peer channel update -o orderer.example.com:7050 -c $CHANNEL_NAME -f ./channel-artifacts/${CORE_PEER_LOCALMSPID}anchors.tx --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA >&log.txt
-                set +x
-  fi
-	res=$?
-	cat log.txt
-	verifyResult $res "Anchor peer update failed"
+ 		set -x
+	peer channel update -o orderer.alastria.com:7050 -c $CHANNEL_NAME -f /opt/gopath/src/github.com/hyperledger/fabric/peer/channel-artifacts/${CORE_PEER_LOCALMSPID}anchors.tx --tls --cafile $ORDERER_CA 
+		set +x
+	
 	echo "===================== Anchor peers for org \"$CORE_PEER_LOCALMSPID\" on \"$CHANNEL_NAME\" is updated successfully ===================== "
-	sleep $DELAY
+	sleep 3
 	echo
 }
 
-## Sometimes Join takes time hence RETRY at least for 5 times
+#########################################################
+# Join Channel 											#
+#########################################################
 joinChannelWithRetry () {
 	PEER=$1
 	ORG=$2
-	setGlobals $PEER $ORG
+	MSP=$3
+	setGlobals $PEER $ORG $MSP
 
         set -x
-	peer channel join -b $CHANNEL_NAME.block  >&log.txt
+	peer channel join -b $CHANNEL_NAME.block 
         set +x
 	res=$?
 	cat log.txt
@@ -79,13 +79,20 @@ joinChannelWithRetry () {
 	verifyResult $res "After $MAX_RETRY attempts, peer${PEER}.org${ORG} has failed to Join the Channel"
 }
 
+#########################################################
+# Install Chaincode 									#
+#########################################################
 installChaincode () {
 	PEER=$1
 	ORG=$2
-	setGlobals $PEER $ORG
-	VERSION=${3:-1.0}
+	MSP=$3
+	CHAINCODE_NAME=$4
+	CHAINCODE_PATH=$5
+	CHAINCODE_VERSION=$6
+
+	setGlobals $PEER $ORG $MSP
         set -x
-	peer chaincode install -n mycc -v ${VERSION} -l ${LANGUAGE} -p ${CC_SRC_PATH} >&log.txt
+	peer chaincode install -n ${CHAINCODE_NAME} -v ${CHAINCODE_VERSION} -p ${CHAINCODE_PATH} 
         set +x
 	res=$?
 	cat log.txt
@@ -94,23 +101,22 @@ installChaincode () {
 	echo
 }
 
+
+#########################################################
+# instantiate Chaincode 								#
+#########################################################
 instantiateChaincode () {
 	PEER=$1
 	ORG=$2
-	setGlobals $PEER $ORG
-	VERSION=${3:-1.0}
+	MSP=$3
+	CHAINCODE_NAME=$4
+	CHAINCODE_PATH=$5
+	CHAINCODE_VERSION=$6
 
-	# while 'peer chaincode' command can get the orderer endpoint from the peer (if join was successful),
-	# lets supply it directly as we know it using the "-o" option
-	if [ -z "$CORE_PEER_TLS_ENABLED" -o "$CORE_PEER_TLS_ENABLED" = "false" ]; then
-                set -x
-		peer chaincode instantiate -o orderer.example.com:7050 -C $CHANNEL_NAME -n mycc -l ${LANGUAGE} -v ${VERSION} -c '{"Args":["init","a","100","b","200"]}' -P "OR	('Org1MSP.peer','Org2MSP.peer')" >&log.txt
-                set +x
-	else
-                set -x
-		peer chaincode instantiate -o orderer.example.com:7050 --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA -C $CHANNEL_NAME -n mycc -l ${LANGUAGE} -v 1.0 -c '{"Args":["init","a","100","b","200"]}' -P "OR	('Org1MSP.peer','Org2MSP.peer')" >&log.txt
-                set +x
-	fi
+            set -x
+	peer chaincode instantiate -o orderer.alastria.com:7050 --tls --cafile $ORDERER_CA -C $CHANNEL_NAME -n ${CHAINCODE_NAME}  -v ${CHAINCODE_VERSION} -c '{"Args":["init","a","100","b","200"]}' -P "OR	('${CHAINCODE_VERSION}.member','AlastriaMSP.member')" >&log.txt
+            set +x
+
 	res=$?
 	cat log.txt
 	verifyResult $res "Chaincode instantiation on peer${PEER}.org${ORG} on channel '$CHANNEL_NAME' failed"
@@ -118,6 +124,9 @@ instantiateChaincode () {
 	echo
 }
 
+#########################################################
+# Upgrade Chaincode 									#
+#########################################################
 upgradeChaincode () {
     PEER=$1
     ORG=$2
@@ -133,6 +142,10 @@ upgradeChaincode () {
     echo
 }
 
+
+#########################################################
+# Chaincode Query 									#
+#########################################################
 chaincodeQuery () {
   PEER=$1
   ORG=$2
@@ -166,24 +179,23 @@ chaincodeQuery () {
   fi
 }
 
+#########################################################
+# Fetch Channel Config 									#
+#########################################################
 # fetchChannelConfig <channel_id> <output_json>
 # Writes the current channel config for a given channel to a JSON file
 fetchChannelConfig() {
-  CHANNEL=$1
-  OUTPUT=$2
+  	CHANNEL=$1
+  	OUTPUT=$2
 
-  setOrdererGlobals
+  	setOrdererGlobals
 
-  echo "Fetching the most recent configuration block for the channel"
-  if [ -z "$CORE_PEER_TLS_ENABLED" -o "$CORE_PEER_TLS_ENABLED" = "false" ]; then
-    set -x
-    peer channel fetch config config_block.pb -o orderer.example.com:7050 -c $CHANNEL --cafile $ORDERER_CA
-    set +x
-  else
-    set -x
-    peer channel fetch config config_block.pb -o orderer.example.com:7050 -c $CHANNEL --tls --cafile $ORDERER_CA
-    set +x
-  fi
+  	echo "Fetching the most recent configuration block for the channel"
+
+  		set -x
+    peer channel fetch config config_block.pb -o orderer.alastria.com:7050 -c $CHANNEL --tls --cafile $ORDERER_CA
+    	set +x
+
 
   echo "Decoding config block to JSON and isolating config to ${OUTPUT}"
   set -x
@@ -191,17 +203,27 @@ fetchChannelConfig() {
   set +x
 }
 
+
+#########################################################
+# Sign ConfigTx As Peer Org 							#
+#########################################################
 # signConfigtxAsPeerOrg <org> <configtx.pb>
 # Set the peerOrg admin of an org and signing the config update
 signConfigtxAsPeerOrg() {
-        PEERORG=$1
-        TX=$2
-        setGlobals 0 $PEERORG
-        set -x
-        peer channel signconfigtx -f "${TX}"
-        set +x
+    PEER=$1
+    ORG=$2
+    MSP=$3
+    TX=$4
+
+    setGlobals $PEER $ORG $MSP
+    	set -x
+    peer channel signconfigtx -f "${TX}"
+    	set +x
 }
 
+#########################################################
+# Create Config Update 		 							#
+#########################################################
 # createConfigUpdate <channel_id> <original_config.json> <modified_config.json> <output.pb>
 # Takes an original and modified config, and produces the config update tx which transitions between the two
 createConfigUpdate() {
@@ -240,4 +262,4 @@ chaincodeInvoke () {
 	verifyResult $res "Invoke execution on peer${PEER}.org${ORG} failed "
 	echo "===================== Invoke transaction on peer${PEER}.org${ORG} on channel '$CHANNEL_NAME' is successful ===================== "
 	echo
-}
+}0000
