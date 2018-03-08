@@ -26,7 +26,11 @@ setGlobals () {
 	CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/${ORG}.alastria.com/peers/${PEER}.${ORG}.alastria.com/tls/ca.crt
 	CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/${ORG}.alastria.com/users/Admin@${ORG}.alastria.com/msp
 	CORE_PEER_ADDRESS=${PEER}.${ORG}.alastria.com:7051		
-
+	
+	echo  CORE_PEER_LOCALMSPID=$CORE_PEER_LOCALMSPID
+	echo  CORE_PEER_TLS_ROOTCERT_FILE=$CORE_PEER_TLS_ROOTCERT_FILE
+	echo  CORE_PEER_MSPCONFIGPATH=$CORE_PEER_MSPCONFIGPATH
+	echo  CORE_PEER_ADDRESS=$CORE_PEER_ADDRESS
 	env |grep CORE
 }
 
