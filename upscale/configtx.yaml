@@ -1,0 +1,18 @@
+# Copyright IBM Corp. All Rights Reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+###############################################################################
+#   Section: Organizations
+################################################################################
+Organizations:
+    
+    - &Accenture
+        Name: AccentureMSP
+        ID: AccenturekMSP
+        MSPDir: crypto-config/peerOrganizations/accenture.alastria.com/msp
+
+        AnchorPeers:
+            - Host: peer0.accenture.alastria.com
+              Port: 7051
+             
