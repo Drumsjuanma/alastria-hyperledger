@@ -8,7 +8,7 @@ MESSAGE='Usage: init.sg <mode> <node-type> <node-name>
     node-name: NODE_NAME (example: Alastria)' 
     
 
-if ( [ $# -ne 3 ] ); then
+if ( [ $# -ne 1 ] ); then
     echo "$MESSAGE"
     exit
 fi    
@@ -25,7 +25,7 @@ PeerOrgs:
       Count: 1
     Users:
       Count: 1
- ' >> crypto-config.yaml
+ ' > crypto-config.yaml
  
  
  echo '
@@ -38,6 +38,6 @@ Organizations:
         AnchorPeers:
             - Host: peer0.'$DOMAIN'.alastria.com
               Port: 7051
-' >> configtx.yaml
+' > configtx.yaml
 
 
