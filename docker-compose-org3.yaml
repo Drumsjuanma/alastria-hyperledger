@@ -25,7 +25,7 @@ services:
       - CORE_PEER_LOCALMSPID=AccentureMSP
     volumes:
         - /var/run/:/host/var/run/
-        - ./upscale//channel-artifacts/crypto-config/peerOrganizations/accenture.alastria.com/peers/peer0.accenture.alastria.com/msp:/etc/hyperledger/fabric/msp
+        - ./upscale/channel-artifacts/crypto-config/peerOrganizations/accenture.alastria.com/peers/peer0.accenture.alastria.com/msp:/etc/hyperledger/fabric/msp
         - ./upscale/channel-artifacts/crypto-config/peerOrganizations/accenture.alastria.com/peers/peer0.accenture.alastria.com/tls:/etc/hyperledger/fabric/tls
         - peer0.accenture.alastria.com:/var/hyperledger/production
     ports:
@@ -44,8 +44,8 @@ services:
     environment:
       - GOPATH=/opt/gopath
       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
-      - CORE_LOGGING_LEVEL=INFO
-      #- CORE_LOGGING_LEVEL=DEBUG
+      #- CORE_LOGGING_LEVEL=INFO
+      - CORE_LOGGING_LEVEL=DEBUG
       - CORE_PEER_ID=cli-accenture
       - CORE_PEER_ADDRESS=peer0.accenture.alastria.com:7051
       - CORE_PEER_LOCALMSPID=AccentureMSP
