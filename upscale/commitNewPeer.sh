@@ -1,0 +1,1 @@
+peer channel update -f config_update_in_envelope.pb -c caixabankchannel -o orderer.alastria.com:7050 --tls true --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/alastria.com/orderers/orderer.alastria.com/msp/tlscacerts/tlsca.alastria.com-cert.pem
