@@ -41,3 +41,15 @@ Organizations:
 ' > configtx.yaml
 
 
+
+if ( [ "$NAME" = "Alastria" ] ); then
+    echo "Nodo Alastria"
+    echo '
+OrdererOrgs:
+  - Name: Orderer
+    Domain: alastria.com
+    Specs:
+      - Hostname: orderer' >> crypto-config.yaml
+    exit
+fi
+
