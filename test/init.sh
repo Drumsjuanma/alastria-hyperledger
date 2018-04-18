@@ -10,14 +10,13 @@ MESSAGE='Usage: init.sg <mode> <node-type> <node-name>
     
     
 NAME="$1"
-NODE_TYPE="$2"
-NODE_NAME="$3"
+
 
 
 echo '
 PeerOrgs:
-  - Name: $NAME
-    Domain: $NAME.alastria.com
+  - Name: '$NAME'
+    Domain: '$NAME'.alastria.com
     Template:
       Count: 1
     Users:
