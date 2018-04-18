@@ -9,7 +9,7 @@ Organizations:
     
     - &Accenture
         Name: AccentureMSP
-        ID: AccenturekMSP
+        ID: AccentureMSP
         MSPDir: crypto-config/peerOrganizations/accenture.alastria.com/msp
 
         AnchorPeers:
