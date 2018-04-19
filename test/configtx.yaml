@@ -1,4 +1,8 @@
 
+
+################################################################################
+# organizations
+################################################################################
 Organizations:
     - &Alastria
         Name: AlastriaMSP
@@ -8,4 +12,22 @@ Organizations:
         AnchorPeers:
             - Host: peer0.alastria.alastria.com
               Port: 7051
+################################################################################
+#   SECTION: Orderer
+################################################################################
+Orderer: &OrdererDefaults
+    OrdererType: solo
+    Addresses:
+        - orderer.alastria.com:7050
+    BatchTimeout: 2s
+    BatchSize:
+        MaxMessageCount: 10
+        AbsoluteMaxBytes: 99 MB
+        PreferredMaxBytes: 512 KB
+
+    Kafka:
+        Brokers:
+            - 127.0.0.1:9092
+
+    Organizations:
 
