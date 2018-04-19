@@ -57,6 +57,19 @@ PeerOrgs:
       
       
    echo '
+################################################################################
+# Profiles
+################################################################################
+Profiles:
+    AlastriaGenesis:
+        Orderer:
+            <<: *OrdererDefaults
+            Organizations:
+                - *OrdererOrg
+        Consortiums:
+            SampleConsortium:
+                Organizations:
+                    - *Alastria
 
 ################################################################################
 # organizations
