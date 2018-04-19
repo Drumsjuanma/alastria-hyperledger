@@ -23,19 +23,6 @@ if ( [ "$NAME" = "Alastria" ] ); then
     
     echo '
 ################################################################################
-# Profiles
-################################################################################
-Profiles:
-    AlastriaGenesis:
-        Orderer:
-            <<: *OrdererDefaults
-            Organizations:
-                - *OrdererOrg
-        Consortiums:
-            SampleConsortium:
-                Organizations:
-                    - *Alastria
-################################################################################
 # Orderers
 ################################################################################
 OrdererOrgs:
