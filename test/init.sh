@@ -75,6 +75,12 @@ Profiles:
 # organizations
 ################################################################################
 Organizations:
+    - &OrdererOrg
+        Name: OrdererOrg
+        ID: OrdererMSP
+        MSPDir: crypto-config/peerOrganizations/orderer.alastria.com/msp
+
+
     - &'$NAME'
         Name: '$NAME'MSP
         ID: '$NAME'MSP
@@ -83,6 +89,7 @@ Organizations:
         AnchorPeers:
             - Host: peer0.'$DOMAIN'.alastria.com
               Port: 7051
+
 ################################################################################
 #   SECTION: Orderer
 ################################################################################
