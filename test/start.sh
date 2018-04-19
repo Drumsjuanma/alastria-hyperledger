@@ -22,4 +22,5 @@ cryptogen generate --config ./crypto-config.yaml
 
 if ( [ "$NAME" = "alastria" ] ); then
     echo -e '\n\n\e[92m//////// --- Creando bloque genesis --- ////////\e[39m'
-    configtxgen -profile ThreeOrgsOrdererGenesis -outputBlock ./channel-artifacts/genesis.block
+    configtxgen -profile AlastriaGenesis  -outputBlock ./channel-artifacts/genesis.block
+fi
