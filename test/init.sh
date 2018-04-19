@@ -65,7 +65,7 @@ Organizations:
     - &OrdererOrg
         Name: OrdererOrg
         ID: OrdererMSP
-        MSPDir: crypto-config/peerOrganizations/orderer.alastria.com/msp
+        MSPDir: crypto-config/ordererOrganizations/alastria.com/msp
 
 
     - &'$NAME'
@@ -301,4 +301,16 @@ else
     
 fi
 
+
+
+
+export FABRIC_CFG_PATH=$PWD
+
+echo -e '\e[92m//////// --- Creando certificados --- ////////\e[39m'
+cryptogen generate --config ./crypto-config.yaml
+
+if ( [ "$DOMAIN" = "alastria" ] ); then
+    echo -e '\n\n\e[92m//////// --- Creando bloque genesis --- ////////\e[39m'
+    configtxgen -profile AlastriaGenesis  -outputBlock ./channel-artifacts/genesis.block
+fi
 

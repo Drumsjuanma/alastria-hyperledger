@@ -2,3 +2,4 @@ configtx.yaml
 crypto-config.yaml
 docker-compose-cli.yaml
 crypto-config
+channel-artifacts/*
