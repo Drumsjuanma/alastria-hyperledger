@@ -128,9 +128,9 @@ services:
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric
     command: orderer
     volumes:
-      - ../channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
-      - ../crypto-config/ordererOrganizations/alastria.com/orderers/orderer.alastria.com/msp:/var/hyperledger/orderer/msp
-      - ../crypto-config/ordererOrganizations/alastria.com/orderers/orderer.alastria.com/tls/:/var/hyperledger/orderer/tls
+      - ./channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
+      - ./crypto-config/ordererOrganizations/alastria.com/orderers/orderer.alastria.com/msp:/var/hyperledger/orderer/msp
+      - ./crypto-config/ordererOrganizations/alastria.com/orderers/orderer.alastria.com/tls/:/var/hyperledger/orderer/tls
       - orderer.alastria.com:/var/hyperledger/production/orderer
     ports:
       - 7050:7050
@@ -150,8 +150,8 @@ services:
       - CORE_PEER_LOCALMSPID=AlastriaMSP
     volumes:
       - /var/run/:/host/var/run/
-      - ../crypto-config/peerOrganizations/alastria.alastria.com/peers/peer0.alastria.alastria.com/msp:/etc/hyperledger/fabric/msp
-      - ../crypto-config/peerOrganizations/alastria.alastria.com/peers/peer0.alastria.alastria.com/tls:/etc/hyperledger/fabric/tls
+      - ./crypto-config/peerOrganizations/alastria.alastria.com/peers/peer0.alastria.alastria.com/msp:/etc/hyperledger/fabric/msp
+      - ./crypto-config/peerOrganizations/alastria.alastria.com/peers/peer0.alastria.alastria.com/tls:/etc/hyperledger/fabric/tls
       - peer0.alastria.alastria.com:/var/hyperledger/production
     ports:
       - '$PORT1':7051
@@ -225,71 +225,68 @@ else
 
 
 	echo '
-	version: "'"2"'"
+version: "2"
 
-	volumes:
-	  peer0.'$DOMAIN'.alastria.com:
+volumes:
+  peer0.'$DOMAIN'.alastria.com:
 
-	networks:
-	  byfn:
+networks:
+  byfn:
 
-	services:
+services:
 
-	  peer0.'$DOMAIN'.alastria.com:
-	    container_name: peer0.'$DOMAIN'.alastria.com
-	    extends:
-	      file: base/peer-base.yaml
-	      service: peer-base
-	    environment:
-	      - CORE_PEER_ID=peer0.'$DOMAIN'.alastria.com
-	      - CORE_PEER_ADDRESS=peer0.'$DOMAIN'.alastria.com:7051
-	      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.'$DOMAIN'.alastria.com:7051
-	      - CORE_PEER_LOCALMSPID='$NAME'MSP
-	    volumes:
-	        - /var/run/:/host/var/run/
-	        - ./upscale/channel-artifacts/crypto-config/peerOrganizations/'$DOMAIN'.alastria.com/peers/peer0.'$DOMAIN'.alastria.com/msp:/etc/hyperledger/fabric/msp
-	        - ./upscale/channel-artifacts/crypto-config/peerOrganizations/'$DOMAIN'.alastria.com/peers/peer0.'$DOMAIN'.alastria.com/tls:/etc/hyperledger/fabric/tls
-	        - peer0.accenture.alastria.com:/var/hyperledger/production
-	    ports:
-	      - '$PORT1':7051
-	      - '$PORT2':7053
-	    networks:
-	      - byfn
+  peer0.'$DOMAIN'.alastria.com:
+    container_name: peer0.'$DOMAIN'.alastria.com
+    extends:
+      file: base/peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.'$DOMAIN'.alastria.com
+      - CORE_PEER_ADDRESS=peer0.'$DOMAIN'.alastria.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.'$DOMAIN'.alastria.com:7051
+      - CORE_PEER_LOCALMSPID='$NAME'MSP
+    volumes:
+      - /var/run/:/host/var/run/
+      - ./crypto-config/peerOrganizations/'$DOMAIN'.alastria.com/peers/peer0.'$DOMAIN'.alastria.com/msp:/etc/hyperledger/fabric/msp
+      - ./crypto-config/peerOrganizations/'$DOMAIN'.alastria.com/peers/peer0.'$DOMAIN'.alastria.com/tls:/etc/hyperledger/fabric/tls
+      - peer0.'$DOMAIN'.alastria.com:/var/hyperledger/production
+    ports:
+      - '$PORT1':7051
+      - '$PORT2':7053
+    networks:
+      - byfn  
 
-	  
+  '$DOMAIN'-cli:
+    container_name: cli-'$DOMAIN'
+    image: hyperledger/fabric-tools:$IMAGE_TAG
+    tty: true
+    stdin_open: true
+    environment:
+      - GOPATH=/opt/gopath
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      #- CORE_LOGGING_LEVEL=INFO
+      - CORE_LOGGING_LEVEL=DEBUG
+      - CORE_PEER_ID=cli-'$DOMAIN'
+      - CORE_PEER_ADDRESS=peer0.'$DOMAIN'.alastria.com:7051
+      - CORE_PEER_LOCALMSPID='$NAME'MSP
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/'$DOMAIN'.alastria.com/peers/peer0.'$DOMAIN'.alastria.com/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/'$DOMAIN'.alastria.com/peers/peer0.'$DOMAIN'.alastria.com/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/'$DOMAIN'.alastria.com/peers/peer0.'$DOMAIN'.alastria.com/tls/ca.crt
+      - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/'$DOMAIN'.alastria.com/users/Admin@'$DOMAIN'.alastria.com/msp
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    command: /bin/bash
+    volumes:
+      - /var/run/:/host/var/run/
+      - ./chaincode/:/opt/gopath/src/github.com/chaincode
+      - ./crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
+      - ./scripts:/opt/gopath/src/github.com/hyperledger/fabric/peer/scripts/
+      - ./upscale/:/opt/gopath/src/github.com/hyperledger/fabric/peer/upscale
+    depends_on:
+      - peer0.'$DOMAIN'.alastria.com
+    networks:
+      - byfn' > docker-compose-cli.yaml
 
-	  '$DOMAIN'-cli:
-	    container_name: cli-'$DOMAIN'
-	    image: hyperledger/fabric-tools:$IMAGE_TAG
-	    tty: true
-	    stdin_open: true
-	    environment:
-	      - GOPATH=/opt/gopath
-	      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
-	      #- CORE_LOGGING_LEVEL=INFO
-	      - CORE_LOGGING_LEVEL=DEBUG
-	      - CORE_PEER_ID=cli-'$DOMAIN'
-	      - CORE_PEER_ADDRESS=peer0.'$DOMAIN'.alastria.com:7051
-	      - CORE_PEER_LOCALMSPID='$NAME'MSP
-	      - CORE_PEER_TLS_ENABLED=true
-	      - CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/'$DOMAIN'.alastria.com/peers/peer0.'$DOMAIN'.alastria.com/tls/server.crt
-	      - CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/'$DOMAIN'.alastria.com/peers/peer0.'$DOMAIN'.alastria.com/tls/server.key
-	      - CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/'$DOMAIN'.alastria.com/peers/peer0.'$DOMAIN'.alastria.com/tls/ca.crt
-	      - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/'$DOMAIN'.alastria.com/users/Admin@'$DOMAIN'.alastria.com/msp
-	    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
-	    command: /bin/bash
-	    volumes:
-	        - /var/run/:/host/var/run/
-	        - ./chaincode/:/opt/gopath/src/github.com/chaincode
-	        - ./upscale/channel-artifacts/crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
-	        - ./scripts:/opt/gopath/src/github.com/hyperledger/fabric/peer/scripts/
-	        - ./upscale/:/opt/gopath/src/github.com/hyperledger/fabric/peer/upscale
-	    depends_on:
-	      - peer0.'$DOMAIN'.alastria.com
-	    networks:
-	      - byfn
-		' > docker-compose-cli.yaml
-    
 fi
 
 
