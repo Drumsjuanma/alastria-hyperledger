@@ -234,7 +234,7 @@ else
 
 
 	echo '
-	version: '2'
+	version: "'"2"'"
 
 	volumes:
 	  peer0.'$DOMAIN'.alastria.com:
