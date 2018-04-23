@@ -7,7 +7,6 @@ MESSAGE='Usage: init.sg <mode> <node-type> <node-name>
     node-type: validator | general
     node-name: NODE_NAME (example: Alastria)' 
     
-
 if ( [ $# -ne 3 ] ); then
     echo "$MESSAGE"
     exit
@@ -17,6 +16,9 @@ DOMAIN="$1"
 NAME=${DOMAIN^}
 PORT1="$2"
 PORT2="$3"
+
+mkdir nodo-$DOMAIN
+mkdir nodo-$DOMAIN/channel-artifacts
 
 if ( [ "$NAME" = "Alastria" ] ); then
     echo "Nodo Alastria"
@@ -40,7 +42,7 @@ PeerOrgs:
     Template:
       Count: 1
     Users:
-      Count: 1' > crypto-config.yaml
+      Count: 1' > nodo-$DOMAIN/crypto-config.yaml
       
       
    echo '
@@ -95,7 +97,7 @@ Orderer: &OrdererDefaults
             - 127.0.0.1:9092
 
     Organizations:
-' > configtx.yaml
+' > nodo-$DOMAIN/configtx.yaml
 
 	
 
@@ -140,7 +142,7 @@ services:
   peer0.alastria.alastria.com:
     container_name: peer0.alastria.alastria.com
     extends:
-      file: base/peer-base.yaml
+      file: ../base/peer-base.yaml
       service: peer-base
     environment:
       - CORE_PEER_ID=peer0.alastria.alastria.com
@@ -189,7 +191,7 @@ services:
       - orderer.alastria.com
       - peer0.alastria.alastria.com
     networks:
-      - byfn' > docker-compose-cli.yaml
+      - byfn' > nodo-$DOMAIN/docker-compose-cli.yaml
 
       
     
@@ -205,7 +207,7 @@ else
           Count: 1
         Users:
           Count: 1
-     ' > crypto-config.yaml
+     ' > nodo-$DOMAIN/crypto-config.yaml
 
 
      echo '
@@ -221,7 +223,7 @@ else
             AnchorPeers:
                 - Host: peer0.'$DOMAIN'.alastria.com
                   Port: 7051
-    ' > configtx.yaml
+    ' > nodo-$DOMAIN/configtx.yaml
 
 
 	echo '
@@ -238,7 +240,7 @@ services:
   peer0.'$DOMAIN'.alastria.com:
     container_name: peer0.'$DOMAIN'.alastria.com
     extends:
-      file: base/peer-base.yaml
+      file: ../base/peer-base.yaml
       service: peer-base
     environment:
       - CORE_PEER_ID=peer0.'$DOMAIN'.alastria.com
@@ -285,17 +287,22 @@ services:
     depends_on:
       - peer0.'$DOMAIN'.alastria.com
     networks:
-      - byfn' > docker-compose-cli.yaml
+      - byfn' > nodo-$DOMAIN/docker-compose-cli.yaml
 
 fi
 
 
 
 
-export FABRIC_CFG_PATH=$PWD
 
 echo -e '\e[92m//////// --- Creando certificados --- ////////\e[39m'
-cryptogen generate --config ./crypto-config.yaml
+
+cp .env nodo-$DOMAIN
+cd nodo-$DOMAIN
+
+export FABRIC_CFG_PATH=$PWD
+
+cryptogen generate --config crypto-config.yaml
 
 if ( [ "$DOMAIN" = "alastria" ] ); then
     echo -e '\n\n\e[92m//////// --- Creando bloque genesis --- ////////\e[39m'
@@ -305,5 +312,17 @@ fi
 echo 'docker exec -it cli-'$DOMAIN' bash' > cliConnect.sh
 chmod +x cliConnect.sh
 
+
+echo '
+#!/bin/bash
+set -u
+set -e
+
+IMAGETAG="latest"
+IMAGE_TAG=$IMAGETAG docker-compose -f docker-compose-cli.yaml up -d
+
+' > start.sh
+
+chmod +x start.sh
 
 
