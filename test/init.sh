@@ -182,9 +182,9 @@ services:
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
     volumes:
       - /var/run/:/host/var/run/
-      - ./chaincode/:/opt/gopath/src/github.com/hyperledger/fabric/examples/chaincode/go
+      - ../chaincode/:/opt/gopath/src/github.com/hyperledger/fabric/examples/chaincode/go
       - ./crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
-      - ./scripts:/opt/gopath/src/github.com/hyperledger/fabric/peer/scripts/
+      - ../scripts:/opt/gopath/src/github.com/hyperledger/fabric/peer/scripts/
       - ./channel-artifacts:/opt/gopath/src/github.com/hyperledger/fabric/peer/channel-artifacts
       - ./upscale/:/opt/gopath/src/github.com/hyperledger/fabric/peer/upscale
     depends_on:
@@ -280,9 +280,9 @@ services:
     command: /bin/bash
     volumes:
       - /var/run/:/host/var/run/
-      - ./chaincode/:/opt/gopath/src/github.com/chaincode
+      - ../chaincode/:/opt/gopath/src/github.com/chaincode
       - ./crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
-      - ./scripts:/opt/gopath/src/github.com/hyperledger/fabric/peer/scripts/
+      - ../scripts:/opt/gopath/src/github.com/hyperledger/fabric/peer/scripts/
       - ./upscale/:/opt/gopath/src/github.com/hyperledger/fabric/peer/upscale
     depends_on:
       - peer0.'$DOMAIN'.alastria.com
@@ -313,16 +313,5 @@ echo 'docker exec -it cli-'$DOMAIN' bash' > cliConnect.sh
 chmod +x cliConnect.sh
 
 
-echo '
-#!/bin/bash
-set -u
-set -e
-
-IMAGETAG="latest"
-IMAGE_TAG=$IMAGETAG docker-compose -f docker-compose-cli.yaml up -d
-
-' > start.sh
-
-chmod +x start.sh
 
 
